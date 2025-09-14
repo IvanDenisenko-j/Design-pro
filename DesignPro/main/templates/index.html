@@ -1,0 +1,20 @@
+{% extends 'basic.html' %}
+
+{% block content %}
+<h1>Добро пожаловать в DesignPro!</h1>
+
+{% if user.is_authenticated %}
+    <p>Привет, {{ user.username }}!</p>
+    <p>Вы успешно вошли в систему.</p>
+    <div>
+        <a href="{% url 'home' %}">Личный кабинет</a>
+        <a href="{% url 'logout' %}">Выйти</a>
+    </div>
+{% else %}
+    <p>Пожалуйста войдите или зарегистрируйтесь для доступа к системе.</p>
+    <div>
+        <a href="{% url 'login' %}">Войти</a>
+        <a href="{% url 'register' %}">Регистрация</a>
+    </div>
+{% endif %}
+{% endblock %}
