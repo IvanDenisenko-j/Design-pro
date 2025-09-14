@@ -7,4 +7,13 @@ urlpatterns = [
     path('', views.login_view, name='login'),
     path('home/', views.home_view, name='home'),
     path('index/', views.index, name='index'),
+
+    path('applications/create/', views.create_application, name='create_application'),
+    path('applications/', views.application_list, name='application_list'),
+    path('applications/delete/<int:pk>/', views.delete_application, name='delete_application'),
+
+
+    path('categories/create/', views.create_category, name='create_category'),
+    path('categories/', views.category_list, name='category_list'),
+    path('categories/delete/<int:pk>/', views.delete_category, name='delete_category'),
 ]

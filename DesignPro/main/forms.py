@@ -14,3 +14,29 @@ class UserRegisterForm(UserCreationForm):
 class CustomLoginForm(AuthenticationForm):
     username = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
     password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+
+from django import forms
+from .models import Application, Category
+
+class ApplicationForm(forms.ModelForm):
+    class Meta:
+        model = Application
+        fields = ['name', 'description', 'category', 'image']
+        widgets = {
+            'description': forms.Textarea(attrs={'rows': 4}),
+            'category': forms.Select(attrs={'class': 'form-control'}),
+        }
+        labels = {
+            'name': 'Название заявки',
+            'description': 'Описание',
+            'category': 'Категория',
+            'image': 'Изображение',
+        }
+
+class CategoryForm(forms.ModelForm):
+    class Meta:
+        model = Category
+        fields = ['name']
+        labels = {
+            'name': 'Название категории',
+        }

@@ -11,6 +11,12 @@
             <li><a href="{% url 'index' %}">Главная</a></li>
             {% if user.is_authenticated %}
                 <li><a href="{% url 'home' %}">Кабинет</a></li>
+                <li><a href="{% url 'create_application' %}">Создать заявку</a></li>
+                <li><a href="{% url 'application_list' %}">Мои заявки</a></li>
+                {% if user.is_staff %}
+                    <li><a href="{% url 'create_category' %}">Создать категорию</a></li>
+                    <li><a href="{% url 'category_list' %}">Категории</a></li>
+                {% endif %}
                 <li><a href="{% url 'logout' %}">Выйти</a></li>
             {% else %}
                 <li><a href="{% url 'login' %}">Войти</a></li>
@@ -23,9 +29,7 @@
         {% if messages %}
         <div>
             {% for message in messages %}
-            <div>
-                {{ message }}
-            </div>
+            <div>{{ message }}</div>
             {% endfor %}
         </div>
         {% endif %}

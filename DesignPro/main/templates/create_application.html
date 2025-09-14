@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Создание заявки</h2>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div>
+        <label>Название заявки:</label>
+        {{ form.name }}
+    </div>
+
+    <div>
+        <label>Категория:</label>
+        {{ form.category }}
+    </div>
+
+    <div>
+        <label>Описание:</label>
+        {{ form.description }}
+    </div>
+
+    <div>
+        <label>Изображение:</label>
+        {{ form.image }}
+    </div>
+
+    <button type="submit">Создать заявку</button>
+</form>
+
+<a href="{% url 'application_list' %}">← Назад к списку заявок</a>
+{% endblock %}

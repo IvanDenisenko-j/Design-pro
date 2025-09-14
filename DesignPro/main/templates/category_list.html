@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Список категорий</h2>
+
+{% if categories %}
+    {% for category in categories %}
+    <div style="border: 1px solid #ccc; padding: 15px; margin: 10px 0;">
+        <h3>{{ category.name }}</h3>
+
+        <form method="post" action="{% url 'delete_category' category.pk %}">
+            {% csrf_token %}
+            <button type="submit" onclick="return confirm('Удалить эту категорию?')">Удалить</button>
+        </form>
+    </div>
+    {% endfor %}
+{% else %}
+    <p>Категорий пока нет.</p>
+{% endif %}
+
+<a href="{% url 'create_category' %}">+ Создать новую категорию</a>
+<br>
+<a href="{% url 'home' %}">← Назад в кабинет</a>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Мои заявки</h2>
+
+{% if applications %}
+    {% for application in applications %}
+    <div style="border: 1px solid #ccc; padding: 15px; margin: 10px 0;">
+        <h3>{{ application.name }}</h3>
+        <p><strong>Категория:</strong> {{ application.category }}</p>
+        <p><strong>Статус:</strong> {{ application.get_status_display }}</p>
+        <p><strong>Описание:</strong> {{ application.description }}</p>
+        <p><strong>Дата создания:</strong> {{ application.created_at|date:"d.m.Y H:i" }}</p>
+
+        {% if application.image %}
+        <p><strong>Изображение:</strong> <img src="{{ application.image.url }}" alt="{{ application.name }}" width="200"></p>
+        {% endif %}
+
+        <form method="post" action="{% url 'delete_application' application.pk %}">
+            {% csrf_token %}
+            <button type="submit" onclick="return confirm('Удалить эту заявку?')">Удалить</button>
+        </form>
+    </div>
+    {% endfor %}
+{% else %}
+    <p>У вас пока нет заявок.</p>
+{% endif %}
+
+<a href="{% url 'create_application' %}">+ Создать новую заявку</a>
+<br>
+<a href="{% url 'home' %}">← Назад в кабинет</a>
+{% endblock %}
