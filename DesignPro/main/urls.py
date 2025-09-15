@@ -11,9 +11,11 @@ urlpatterns = [
     path('applications/create/', views.create_application, name='create_application'),
     path('applications/', views.application_list, name='application_list'),
     path('applications/delete/<int:pk>/', views.delete_application, name='delete_application'),
-
+    path('applications/status/<int:pk>/', views.change_status, name='change_status'),
 
     path('categories/create/', views.create_category, name='create_category'),
     path('categories/', views.category_list, name='category_list'),
     path('categories/delete/<int:pk>/', views.delete_category, name='delete_category'),
+
+    path('staff/applications/', views.staff_application_list, name='staff_application_list'),
 ]

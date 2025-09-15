@@ -1,0 +1,43 @@
+ {% extends 'base.html' %}
+
+{% block content %}
+<h2>Управление заявками (Staff)</h2>
+
+<!-- Фильтр по статусу -->
+<form method="get">
+    <label>Фильтр по статусу:</label>
+    <select name="status" onchange="this.form.submit()">
+        <option value="">Все заявки</option>
+        <option value="new" {% if status_filter == 'new' %}selected{% endif %}>Новые</option>
+        <option value="in_progress" {% if status_filter == 'in_progress' %}selected{% endif %}>В работе</option>
+        <option value="completed" {% if status_filter == 'completed' %}selected{% endif %}>Выполненные</option>
+    </select>
+</form>
+
+{% if applications %}
+    {% for application in applications %}
+    <div style="border: 1px solid #ccc; padding: 15px; margin: 10px 0;">
+        <h3>{{ application.name }}</h3>
+        <p><strong>Пользователь:</strong> {{ application.user.username }}</p>
+        <p><strong>Категория:</strong> {{ application.category }}</p>
+        <p><strong>Статус:</strong> {{ application.get_status_display }}</p>
+        <p><strong>Описание:</strong> {{ application.description }}</p>
+        <p><strong>Дата создания:</strong> {{ application.created_at|date:"d.m.Y H:i" }}</p>
+
+        <div>
+            <a href="{% url 'change_status' application.pk %}">Изменить статус</a>
+            {% if user.is_superuser %}
+            <form method="post" action="{% url 'delete_application' application.pk %}" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" onclick="return confirm('Удалить эту заявку?')">Удалить</button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+{% else %}
+    <p>Заявок нет.</p>
+{% endif %}
+
+<a href="{% url 'home' %}">← Назад в кабинет</a>
+{% endblock %}

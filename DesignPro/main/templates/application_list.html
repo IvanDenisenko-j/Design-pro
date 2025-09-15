@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Мои заявки</h2>
+<h2>{% if user.is_staff %}Все заявки{% else %}Мои заявки{% endif %}</h2>
 
 {% if applications %}
     {% for application in applications %}
@@ -16,17 +16,28 @@
         <p><strong>Изображение:</strong> <img src="{{ application.image.url }}" alt="{{ application.name }}" width="200"></p>
         {% endif %}
 
-        <form method="post" action="{% url 'delete_application' application.pk %}">
-            {% csrf_token %}
-            <button type="submit" onclick="return confirm('Удалить эту заявку?')">Удалить</button>
-        </form>
+        <div>
+            {% if application.can_change_status %}
+            <a href="{% url 'change_status' application.pk %}">Изменить статус</a>
+            {% endif %}
+
+            {% if user == application.user or user.is_superuser %}
+            <form method="post" action="{% url 'delete_application' application.pk %}" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" onclick="return confirm('Удалить эту заявку?')">Удалить</button>
+            </form>
+            {% endif %}
+        </div>
     </div>
     {% endfor %}
 {% else %}
-    <p>У вас пока нет заявок.</p>
+    <p>Заявок нет.</p>
 {% endif %}
 
+{% if not user.is_staff %}
 <a href="{% url 'create_application' %}">+ Создать новую заявку</a>
 <br>
+{% endif %}
+
 <a href="{% url 'home' %}">← Назад в кабинет</a>
 {% endblock %}

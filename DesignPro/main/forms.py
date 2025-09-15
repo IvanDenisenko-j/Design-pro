@@ -1,7 +1,7 @@
-from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
-
+from django import forms
+from .models import Application, Category
 
 class UserRegisterForm(UserCreationForm):
     email = forms.EmailField(required=True, label='Email')
@@ -15,16 +15,12 @@ class CustomLoginForm(AuthenticationForm):
     username = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
     password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
 
-from django import forms
-from .models import Application, Category
-
 class ApplicationForm(forms.ModelForm):
     class Meta:
         model = Application
         fields = ['name', 'description', 'category', 'image']
         widgets = {
             'description': forms.Textarea(attrs={'rows': 4}),
-            'category': forms.Select(attrs={'class': 'form-control'}),
         }
         labels = {
             'name': 'Название заявки',
@@ -39,4 +35,12 @@ class CategoryForm(forms.ModelForm):
         fields = ['name']
         labels = {
             'name': 'Название категории',
+        }
+
+class StatusForm(forms.ModelForm):
+    class Meta:
+        model = Application
+        fields = ['status']
+        labels = {
+            'status': 'Статус заявки',
         }

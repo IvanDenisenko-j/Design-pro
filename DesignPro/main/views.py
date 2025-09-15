@@ -2,9 +2,10 @@ from django.contrib.auth import login, authenticate, logout
 from .forms import UserRegisterForm, CustomLoginForm
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.http import HttpResponseForbidden
 from django.contrib import messages
 from .models import Application, Category
-from .forms import ApplicationForm, CategoryForm
+from .forms import ApplicationForm, CategoryForm, StatusForm
 
 def register(request):
     if request.method == 'POST':
@@ -42,10 +43,8 @@ def logout_view(request):
     logout(request)
     return redirect('/')
 
-
 def is_staff(user):
     return user.is_staff
-
 
 @login_required
 def create_application(request):
@@ -111,3 +110,47 @@ def delete_category(request, pk):
         return redirect('category_list')
 
     return render(request, 'delete_category.html', {'category': category})
+
+@login_required
+def application_list(request):
+    if request.user.is_staff:
+        applications = Application.objects.all().order_by('-created_at')
+    else:
+        applications = Application.objects.filter(user=request.user).order_by('-created_at')
+    return render(request, 'application_list.html', {'applications': applications})
+
+@login_required
+def change_status(request, pk):
+    application = get_object_or_404(Application, pk=pk)
+
+    if not application.can_change_status(request.user):
+        return HttpResponseForbidden("У вас нет прав для изменения статуса этой заявки")
+
+    if request.method == 'POST':
+        form = StatusForm(request.POST, instance=application)
+        if form.is_valid():
+            form.save()
+            messages.success(request,
+                             f'Статус заявки "{application.name}" изменен на "{application.get_status_display()}"')
+            return redirect('application_list')
+    else:
+        form = StatusForm(instance=application)
+
+    return render(request, 'change_status.html', {
+        'form': form,
+        'application': application
+    })
+
+@user_passes_test(is_staff)
+def staff_application_list(request):
+    status_filter = request.GET.get('status', '')
+
+    if status_filter:
+        applications = Application.objects.filter(status=status_filter).order_by('-created_at')
+    else:
+        applications = Application.objects.all().order_by('-created_at')
+
+    return render(request, 'staff_application_list.html', {
+        'applications': applications,
+        'status_filter': status_filter
+    })

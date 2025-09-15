@@ -31,8 +31,20 @@ class Application(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Пользователь')
 
     def __str__(self):
-        return self.name
+        return f"{self.name} - {self.get_status_display()}"
+
+    def set_in_progress(self):
+        self.status = 'in_progress'
+        self.save()
+
+    def set_completed(self):
+        self.status = 'completed'
+        self.save()
+
+    def can_change_status(self, user):
+        return True
 
     class Meta:
         verbose_name = 'Заявка'
         verbose_name_plural = 'Заявки'
+        ordering = ['-created_at']
